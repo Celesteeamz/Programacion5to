@@ -5,10 +5,20 @@ let gameSpeed = 5;
 let gravity = 0.5;
 let gameOver = false;
 let score = 0;
-let highScore = 0; // MODIFICADO
+let highScore = 0;
 
-let jumpSound = new Audio("css/jump.mp3"); // MODIFICADO
-let milestoneSound = new Audio("css/milestone.mp3"); // MODIFICADO
+let jumpSound = new Audio("css/jump.mp3");
+let milestoneSound = new Audio("css/milestone.mp3");
+let dogSound = new Audio("css/dog.mp3"); // ✅ NUEVO sonido al saltar
+
+let dinoImg = new Image();
+dinoImg.src = "css/dino.png";
+
+let dinoVerdeImg = new Image();
+dinoVerdeImg.src = "css/dinoverde.png"; // ✅ NUEVA imagen para salto
+
+let cactusImg = new Image();
+cactusImg.src = "css/cactus.png";
 
 let dino = {
   x: 50,
@@ -17,7 +27,7 @@ let dino = {
   height: 47,
   vy: 0,
   isJumping: false,
-  color: "green" // MODIFICADO
+  color: "green"
 };
 
 let obstacle = {
@@ -26,12 +36,6 @@ let obstacle = {
   width: 25,
   height: 40
 };
-
-let dinoImg = new Image();
-dinoImg.src = "css/dino.png"; // MODIFICADO
-
-let cactusImg = new Image();
-cactusImg.src = "css/cactus.png"; // MODIFICADO
 
 function gameLoop() {
   if (!gameOver) {
@@ -43,8 +47,6 @@ function gameLoop() {
 
 function update() {
   score++;
-
-  // MODIFICADO: Aumentar velocidad cada 100 puntos
   if (score % 100 === 0) {
     gameSpeed += 0.5;
     milestoneSound.play();
@@ -57,7 +59,7 @@ function update() {
       dino.y = canvas.height - dino.height;
       dino.isJumping = false;
       dino.vy = 0;
-      dino.color = "green"; // Volver al color original
+      dino.color = "green";
     }
   }
 
@@ -69,7 +71,7 @@ function update() {
   if (collision(dino, obstacle)) {
     gameOver = true;
     document.getElementById("restartBtn").style.display = "block";
-    if (score > highScore) highScore = score; // MODIFICADO
+    if (score > highScore) highScore = score;
   }
 }
 
@@ -88,14 +90,15 @@ function draw() {
   ctx.fillStyle = "#000";
   ctx.font = "20px Arial";
   ctx.fillText("Score: " + score, 10, 25);
-  ctx.fillText("High Score: " + highScore, 480, 25); // MODIFICADO
+  ctx.fillText("High Score: " + highScore, 480, 25);
 
-  // MODIFICADO: Color dinámico
-  if (!dinoImg.complete) {
+  let currentDinoImg = dino.isJumping ? dinoVerdeImg : dinoImg; // ✅ imagen según estado
+
+  if (!currentDinoImg.complete) {
     ctx.fillStyle = dino.color;
     ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
   } else {
-    ctx.drawImage(dinoImg, dino.x, dino.y, dino.width, dino.height);
+    ctx.drawImage(currentDinoImg, dino.x, dino.y, dino.width, dino.height);
   }
 
   if (!cactusImg.complete) {
@@ -106,28 +109,29 @@ function draw() {
   }
 }
 
-document.addEventListener("keydown", function(e) {
+document.addEventListener("keydown", function (e) {
   if (e.code === "Space" && !dino.isJumping && !gameOver) {
     dino.isJumping = true;
     dino.vy = -10;
-    dino.color = "orange"; // MODIFICADO: color temporal
-    jumpSound.play(); // MODIFICADO
+    dino.color = "orange";
+    jumpSound.play();
+    dogSound.play(); 
     e.preventDefault();
   }
 });
 
-document.getElementById("restartBtn").addEventListener("click", function() {
+document.getElementById("restartBtn").addEventListener("click", function () {
   gameOver = false;
   score = 0;
   dino.y = canvas.height - dino.height;
   dino.isJumping = false;
   dino.vy = 0;
   obstacle.x = canvas.width;
-  gameSpeed = 5; // MODIFICADO: reiniciar velocidad
+  gameSpeed = 5;
   this.style.display = "none";
   gameLoop();
 });
 
-window.onload = function() {
+window.onload = function () {
   gameLoop();
 };
