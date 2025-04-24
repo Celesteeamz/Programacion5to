@@ -7,9 +7,11 @@ let gameOver = false;
 let score = 0;
 let highScore = 0;
 
-let jumpSound = new Audio("css/jump.mp3");
-let milestoneSound = new Audio("css/milestone.mp3");
-let dogSound = new Audio("css/dog.mp3"); // ✅ NUEVO sonido al saltar
+let cienSound = new Audio("cien.mp3");
+cienSound.load();
+
+let popSound = new Audio("pop.mp3"); // sonido al saltar
+popSound.load();
 
 let dinoImg = new Image();
 dinoImg.src = "css/dino.png";
@@ -27,7 +29,6 @@ let dino = {
   height: 47,
   vy: 0,
   isJumping: false,
-  color: "green"
 };
 
 let obstacle = {
@@ -47,9 +48,11 @@ function gameLoop() {
 
 function update() {
   score++;
+
   if (score % 100 === 0) {
     gameSpeed += 0.5;
-    milestoneSound.play();
+    cienSound.currentTime = 0;
+    cienSound.play();
   }
 
   if (dino.isJumping) {
@@ -59,7 +62,6 @@ function update() {
       dino.y = canvas.height - dino.height;
       dino.isJumping = false;
       dino.vy = 0;
-      dino.color = "green";
     }
   }
 
@@ -92,10 +94,10 @@ function draw() {
   ctx.fillText("Score: " + score, 10, 25);
   ctx.fillText("High Score: " + highScore, 480, 25);
 
-  let currentDinoImg = dino.isJumping ? dinoVerdeImg : dinoImg; // ✅ imagen según estado
+  let currentDinoImg = dino.isJumping ? dinoVerdeImg : dinoImg;
 
   if (!currentDinoImg.complete) {
-    ctx.fillStyle = dino.color;
+    ctx.fillStyle = "green";
     ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
   } else {
     ctx.drawImage(currentDinoImg, dino.x, dino.y, dino.width, dino.height);
@@ -113,9 +115,8 @@ document.addEventListener("keydown", function (e) {
   if (e.code === "Space" && !dino.isJumping && !gameOver) {
     dino.isJumping = true;
     dino.vy = -10;
-    dino.color = "orange";
-    jumpSound.play();
-    dogSound.play(); 
+    popSound.currentTime = 0;
+    popSound.play();
     e.preventDefault();
   }
 });
