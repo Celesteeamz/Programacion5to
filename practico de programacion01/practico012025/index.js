@@ -7,6 +7,8 @@ let gameOver = false;
 let score = 0;
 let highScore = 0;
 
+let gameLoopId = null;
+
 let cienSound = new Audio("cien.mp3");
 cienSound.load();
 
@@ -17,7 +19,7 @@ let dinoImg = new Image();
 dinoImg.src = "css/dino.png";
 
 let dinoVerdeImg = new Image();
-dinoVerdeImg.src = "css/dinoverde.png"; // ✅ NUEVA imagen para salto
+dinoVerdeImg.src = "css/dinoverde.png"; // imagen para salto
 
 let cactusImg = new Image();
 cactusImg.src = "css/cactus.png";
@@ -131,6 +133,17 @@ document.getElementById("restartBtn").addEventListener("click", function () {
   gameSpeed = 5;
   this.style.display = "none";
   gameLoop();
+});
+
+document.getElementById("manualRestartBtn").addEventListener("click", function() {
+  gameOver = false;
+  score = 0;
+  gameSpeed = 5;
+  dino.y = canvas.height - dino.height;
+  dino.isJumping = false;
+  dino.vy = 0;
+  obstacle.x = canvas.width;
+  document.getElementById("restartBtn").style.display = "none";
 });
 
 window.onload = function () {
